@@ -10,6 +10,9 @@ start = time.time()
 
 state = np.zeros(16)
 # not sure if these should go here
+
+# TODO: change this to be the full list
+# TODO: implement random player to play against
 initial_game_token_list = [1, 1]
 
 # initial_game_token_list is a list of red's tokens numbered from 1 up by type, eg. [1,1,1,2,2]
@@ -27,10 +30,8 @@ mcts = MonteCarloTreeSearch(root)
 best_node = mcts.best_action(100)
 print('run took', time.time() - start, 'seconds.')
 print('')
-# state = np.zeros((3, 3))
-# initial_board_state = TicTacToeGameState(state=state, next_to_move=1)
-#
-# root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial_board_state)
-# mcts = MonteCarloTreeSearch(root)
-# best_node = mcts.best_action(10000)
-# print('')
+
+not_done = True
+print("Let's play a game, AI goes first.")
+while not_done:
+    pass
