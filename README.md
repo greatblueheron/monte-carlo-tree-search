@@ -1,7 +1,8 @@
 ## mctspy : python implementation of Monte Carlo Tree Search algorithm
 
  
-Basic python implementation of [Monte Carlo Tree Search](https://int8.io/monte-carlo-tree-search-beginners-guide) (MCTS) intended to run on small game trees. 
+Basic python implementation of [Monte Carlo Tree Search](https://int8.io/monte-carlo-tree-search-beginners-guide) 
+(MCTS) intended to run on small game trees. 
  
 
 ### Installation
@@ -21,10 +22,10 @@ from mctspy.tree.nodes import TwoPlayersGameMonteCarloTreeSearchNode
 from mctspy.tree.search import MonteCarloTreeSearch
 from mctspy.games.examples.tictactoe import TicTacToeGameState
 
-state = np.zeros((3,3))
-initial_board_state = TicTacToeGameState(state = state, next_to_move=1)
+state = np.zeros((3, 3))
+initial_board_state = TicTacToeGameState(state=state, next_to_move=1)
 
-root = TwoPlayersGameMonteCarloTreeSearchNode(state = initial_board_state)
+root = TwoPlayersGameMonteCarloTreeSearchNode(state=initial_board_state)
 mcts = MonteCarloTreeSearch(root)
 best_node = mcts.best_action(10000)
 
