@@ -1,5 +1,10 @@
 import numpy as np
-from mctspy.games.common import TwoPlayersAbstractGameState, AbstractGameAction, AbstractGameToken
+from mctspy.games.common import TwoPlayersAbstractGameState, AbstractGameAction
+from mctspy.games.compute_winner.winner import Winner
+
+
+# not sure if this is the right way to do this?
+winner = Winner()
 
 
 class InfluencersMove(AbstractGameAction):
@@ -23,63 +28,27 @@ class InfluencersGameState(TwoPlayersAbstractGameState):
     red = 1
     blue = -1
 
-    def __init__(self, state, initial_game_token_list, next_to_move=1):
+    def __init__(self, state, unplayed_tokens, next_to_move=1):
         # initial state is np.zeros(number_of_sites)
-        # initial_game_token_list is a list of red's tokens numbered from 1 up by type, eg. [1,1,1,2,2]
-        # means 3 tokens of type 1 and 2 tokens of type 2; assumption of symmetry with blue
+
         # next_to_move is whose turn it is to move
         self.board = state
+        self.unplayed_tokens = unplayed_tokens
         self.next_to_move = next_to_move
-        self.unplayed_tokens = [c * (-1)**p   # red +ive, blue -ive
-                                for p in range(2)
-                                for c in initial_game_token_list]
 
     @property
     def game_result(self):
         # check if game is over.
         # this is whatever determines if the game is over; in this case, all tokens placed
         if len(self.unplayed_tokens) == 0:
-            # TODO write logic to determine winner
-            if player_one_wins:
-                return self.red
-
-            if player_two_wins:
-                return self.blue
-
-            if draw:
-                return 0.
+            # this function returns +1 if red won, -1 if blue won, and 0 if draw
+            return winner.winner(self.board)
         else:   # game not over - no result
             return None
 
-        # rowsum = np.sum(self.board, 0)
-        # colsum = np.sum(self.board, 1)
-        # diag_sum_tl = self.board.trace()
-        # diag_sum_tr = self.board[::-1].trace()
-        #
-        # player_one_wins = any(rowsum == self.board_size)
-        # player_one_wins += any(colsum == self.board_size)
-        # player_one_wins += (diag_sum_tl == self.board_size)
-        # player_one_wins += (diag_sum_tr == self.board_size)
-        #
-        # if player_one_wins:
-        #     return self.red
-        #
-        # player_two_wins = any(rowsum == -self.board_size)
-        # player_two_wins += any(colsum == -self.board_size)
-        # player_two_wins += (diag_sum_tl == -self.board_size)
-        # player_two_wins += (diag_sum_tr == -self.board_size)
-        #
-        # if player_two_wins:
-        #     return self.blue
-        #
-        # if np.all(self.board != 0):
-        #     return 0.
-        #
-        # # if not over - no result
-        # return None
-
     def is_game_over(self):
-        return self.game_result is not None
+        # return self.game_result is not None   # might be better to use len(self.unplayed_tokens)
+        return len(self.unplayed_tokens) == 0
 
     def is_move_legal(self, move):   # move is an action "idx: _ t: _ p: _"
         # check if correct player moves
@@ -107,16 +76,18 @@ class InfluencersGameState(TwoPlayersAbstractGameState):
                 "move {0} on board {1} is not legal". format(move, self.board)
             )
         new_board = np.copy(self.board)
-        new_board[move.idx] = move.token   # I think this is right, as long as we choose token indices right
+        new_unplayed_tokens = self.unplayed_tokens.copy()
 
-        self.unplayed_tokens.remove(move.token)   # added
+        # place token on game state, remove it from unplayed_tokens
+        new_board[move.idx] = move.token   # I think this is right, as long as we choose token indices right
+        new_unplayed_tokens.remove(move.token)
 
         if self.next_to_move == InfluencersGameState.red:
             next_to_move = InfluencersGameState.blue
         else:
             next_to_move = InfluencersGameState.red
 
-        return InfluencersGameState(new_board, next_to_move)
+        return InfluencersGameState(new_board, new_unplayed_tokens, next_to_move)
 
     def get_legal_actions(self):
         indices = np.where(self.board == 0)[0]   # double check this is doing what I think it is
