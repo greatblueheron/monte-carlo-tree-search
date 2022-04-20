@@ -34,7 +34,7 @@ class Winner(object):
         """ returns +1 if red wins, -1 if blue wins, 0 if draw """
         self.convert(state)
         sampler = neal.SimulatedAnnealingSampler()
-        sample_set = sampler.sample_ising(self.h, self.jay, num_reads=100)
+        sample_set = sampler.sample_ising(self.h, self.jay, num_reads=1000)
         return process(sample_set)
 
 

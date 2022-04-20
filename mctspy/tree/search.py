@@ -36,7 +36,7 @@ class MonteCarloTreeSearch(object):
                 reward = v.rollout()
                 v.backpropagate(reward)
         else:
-            for _ in range(0, simulations_number):            
+            for _ in range(0, simulations_number):  # maybe multithread this???
                 v = self._tree_policy()
                 reward = v.rollout()
                 v.backpropagate(reward)
